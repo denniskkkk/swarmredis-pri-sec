@@ -1,0 +1,179 @@
+version: '3.8'
+services:
+  redis1:
+    image: local/redis
+    container_name: redis1
+    hostname: redis1
+    restart: always
+    deploy:    
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"
+#    ports:
+#      - "7000:7000"
+    volumes:
+      - ./data/redis-conf1.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data1:/redis-data
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.10
+  redis2:
+    image: local/redis
+    container_name: redis2
+    hostname: redis2
+    restart: always    
+    deploy:
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"
+#    ports:
+#      - "7001:7000"
+    volumes:
+      - ./data/redis-conf2.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data2:/redis-data
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.11
+  redis3:
+    image: local/redis
+    container_name: redis3
+    hostname: redis3
+    restart: always  
+    deploy:
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"    
+#    ports:
+#      - "7002:7000"
+    volumes:
+      - ./data/redis-conf3.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data3:/redis-data
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.12
+  redis4:
+    image: local/redis
+    container_name: redis4
+    hostname: redis4
+    restart: always
+    deploy:
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"      
+#    ports:
+#      - "7000:7000"
+    volumes:
+      - ./data/redis-conf4.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data4:/redis-data      
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.13
+    depends_on:
+      - redis1
+  redis5:
+    image: local/redis
+    container_name: redis5
+    hostname: redis5
+    restart: always  
+    deploy:
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"    
+#    ports:
+#      - "7001:7000"
+    volumes:
+      - ./data/redis-conf5.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data5:/redis-data
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.14
+    depends_on:
+      - redis2        
+  redis6:
+    image: local/redis
+    container_name: redis6
+    hostname: redis6
+    restart: always   
+    deploy:
+      resources:     
+        limits:
+          cpus: 0.50
+          memory: 512M    
+    expose: 
+      - "6379"
+      - "6380"
+      - "16379"
+      - "16380"    
+#    ports:
+#      - "7002:7000"
+    volumes:
+      - ./data/redis-conf6.conf:/redis-conf/redis.conf
+      - /var/lib/docker/redis/data6:/redis-data
+    command: redis-server /redis-conf/redis.conf 
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.15       
+    depends_on:
+      - redis3        
+  redis-cluster:
+    tty: true
+#   build:
+#      context: .
+#      args:
+#        redis_version: '6.0.6'
+    image: local/redis
+    hostname: redisserver
+    container_name: redisserver
+    depends_on:
+      - redis1
+      - redis2
+      - redis3
+      - redis4
+      - redis5
+      - redis6      
+    networks:
+      redisnet:
+        ipv4_address: 10.60.0.100
+
+networks:
+   redisnet:
+#     driver: bridge
+     ipam:
+       driver: default
+       config:
+       - subnet: "10.60.0.0/24"        
